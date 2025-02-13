@@ -1,4 +1,5 @@
 import { getPostBySlug, getAllPostSlugs } from '@/lib/posts';
+import { GetStaticProps } from 'next';
 
 export async function generateStaticParams() {
   const paths = getAllPostSlugs();
@@ -7,13 +8,31 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function BlogPost({ 
-  params 
-}: { 
-  params: Promise<{ slug: string }> | { slug: string } 
-}) {
-  const resolvedParams = await Promise.resolve(params);
-  const post = await getPostBySlug(resolvedParams.slug);
+interface PageProps {
+  params: {
+    slug: string;
+  };
+}
+
+export const getStaticProps: GetStaticProps<PageProps> = async (context) => {
+  const { slug } = context.params as { slug: string };
+
+  // 필요한 데이터 가져오기
+  // const data = await fetchData(slug);
+
+  return {
+    props: {
+      params: {
+        slug,
+      },
+      // data,
+    },
+  };
+};
+
+const BlogPostPage = async ({ params }: PageProps) => {
+  const { slug } = params;
+  const post = await getPostBySlug(slug);
 
   return (
     <article className="container mx-auto px-4 py-8">
@@ -25,4 +44,6 @@ export default async function BlogPost({
       />
     </article>
   );
-} 
+};
+
+export default BlogPostPage; 
