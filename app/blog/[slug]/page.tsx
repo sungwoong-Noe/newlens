@@ -7,13 +7,13 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function BlogPost({ 
-  params 
-}: { 
-  params: Promise<{ slug: string }> | { slug: string } 
-}) {
-  const resolvedParams = await Promise.resolve(params);
-  const post = await getPostBySlug(resolvedParams.slug);
+type Props = {
+  params: { slug: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export default async function BlogPost({ params }: Props) {
+  const post = await getPostBySlug(params.slug);
 
   return (
     <article className="container mx-auto px-4 py-8">
