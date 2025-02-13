@@ -1,20 +1,8 @@
-import { getPostBySlug, getAllPostSlugs } from '@/lib/posts';
+import { getPostBySlug } from '@/lib/firebase-posts';
 
-export async function generateStaticParams() {
-  const paths = getAllPostSlugs();
-  return paths.map((path) => ({
-    slug: path.params.slug,
-  }));
-}
-
-interface Props {
-  params: Promise<{ slug: string }>;
-}
-
-export default async function BlogPost(props: Props) {
-  const { slug } = await props.params;
-  const post = await getPostBySlug(slug);
-
+export default async function BlogPost({ params }: { params: { slug: string } }) {
+  const post = await getPostBySlug(params.slug);
+  
   return (
     <article className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
