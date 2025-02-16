@@ -1,9 +1,13 @@
-import { getAllPosts } from "@/lib/firebase-posts";
 import Link from "next/link";
 import Image from "next/image";
+import { getAllArticles } from "@/lib/firebase-article";
 
 export default async function ArticlePage() {
-    const posts = await getAllPosts()
+    const posts = await getAllArticles()
+    console.log('articles', posts)
+    
+
+    
 
     return (
         <div className="container mx-auto px-4 py-8">

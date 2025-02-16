@@ -1,8 +1,10 @@
 'use client';
+
 import Image from "next/image"; 
 import dynamic from "next/dynamic";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useState } from "react";
+import { createArticle } from "@/lib/firebase-article";
 
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), {
     ssr: false,
@@ -44,7 +46,7 @@ export default function WritePage(){
                 thumbnailUrl = await getDownloadURL(storageRef);
             }
 
-            const slug = await createPosts({
+            const slug = await createArticle({
                 title, 
                 content, 
                 thumbnail: thumbnailUrl,

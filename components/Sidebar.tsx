@@ -21,8 +21,8 @@ export default function Sidebar() {
                     {categories.map((category) => (
                         <li key={category.slug}>
                             <Link 
-                            href={`/article/category/${category.slug}`} 
-                            className="flex items-center justify-between text-gray-600 hover:text-gray-900 transition-colors"
+                                href={`/article/category/${category.slug}`} 
+                                className="flex items-center justify-between text-gray-600 hover:text-gray-900 transition-colors"
                             >
                                 <span>{category.name}</span>
                                 <span className="text-sm text-gray-400">{category.count}</span>

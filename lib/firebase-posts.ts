@@ -8,6 +8,8 @@ export async function getAllPosts(): Promise<PostMetadata[]> {
     const q = query(postsCol, orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
     
+    console.log('article', snapshot.docs)
+
     return snapshot.docs.map(doc => ({
       slug: doc.data().slug,
       title: doc.data().title,

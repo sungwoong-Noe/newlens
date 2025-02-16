@@ -70,8 +70,8 @@ export async function createArticle(articleData: {
         await addDoc(collection(db, 'articles'), {
             ...articleData, 
             slug, 
-            createAt: new Date(),
-            updateAt: new Date()
+            createdAt: new Date(),
+            updatedAt: new Date()
         });
         return slug;
     } catch (error) { 
