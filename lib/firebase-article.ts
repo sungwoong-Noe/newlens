@@ -26,7 +26,7 @@ export async function getAllArticles(): Promise<ArticleMetadata[]> {
 
 
 // 특정 게시글 조회
-export async function getPostBySlug(slug: string): Promise<Article> {
+export async function getArticleBySlug(slug: string): Promise<Article> {
     try { 
         const articlesCol = collection(db, 'articles');
         const q = query(articlesCol, where('slug', '==', slug))
