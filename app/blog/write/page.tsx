@@ -124,7 +124,7 @@ export default function WritePage() {
           <input
             type="text"
             value={tags.join(', ')}
-            onChange={(e) => setTags(e.target.value.split(',').map(tag => tag.trim()))}
+            onChange={(e) => setTags([...new Set(e.target.value.split(',').map(tag => tag.trim()))])}
             className="w-full p-2 border rounded"
             placeholder="예: javascript, react, web"
           />
