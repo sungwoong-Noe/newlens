@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getAllArticles } from "@/lib/firebase-article";
+import { getAllArticles } from "@/lib/firebase-articles";
 
 export default async function ArticlePage() {
     const posts = await getAllArticles()

@@ -4,7 +4,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useState } from "react";
-import { createArticle } from "@/lib/firebase-article";
+import { createArticle } from "@/lib/firebase-articles";
 
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), {
     ssr: false,
@@ -18,6 +18,7 @@ export default function WritePage(){
     const [tags, setTags] = useState<string[]>([]);
     const [category, setCategory] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [inputTag, setInputTag] = useState('');
 
     const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -31,6 +32,23 @@ export default function WritePage(){
             reader.readAsDataURL(file);
         }
     };
+
+
+    const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if(e.key === 'Enter' || e.key === ','){
+            e.preventDefault();
+            const newTag = inputTag.trim();
+            if(newTag && !tags.includes(newTag)) { 
+                setTags([...tags, newTag]);
+                setInputTag('');
+            }
+        }
+    }
+
+    const removeTag = (tag: string) => {
+        setTags(tags.filter(t => t !== tag));
+    }
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -67,7 +85,7 @@ export default function WritePage(){
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6">
+        <div className="max-w-6xl mx-auto p-6">
             <h1 className="text-2xl font-bold mb-6">새 글 작성</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 {/* 제목 일력 */}
@@ -83,7 +101,7 @@ export default function WritePage(){
                 </div>
 
                 {/* 썸네일 업로드 */}
-                <div>
+                {/* <div>
                     <label className="block mb-2">썸네일</label>
                     <input 
                         type="file" 
@@ -100,7 +118,7 @@ export default function WritePage(){
                             className="max-w-xs max-h-40 object-cover rounded"
                         />
                     )}
-                </div>
+                </div> */}
 
                 {/* 카테고리 선택 */}
                 <div>
@@ -118,16 +136,46 @@ export default function WritePage(){
                     </select>
                 </div>
 
+                <div>
+        <label className="block mb-2">태그</label>
+        <div className="flex flex-wrap gap-2 p-2 border rounded focus-within:border-blue-500">
+            {tags.map((tag, index) => (
+                <span 
+                    key={index} 
+                    className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center"
+                >
+                    {tag}
+                    <button 
+                        onClick={() => removeTag(tag)}
+                        className="ml-1 text-blue-600 hover:text-blue-800"
+                    >
+                        ×
+                    </button>
+                </span>
+            ))}
+            <input
+                type="text"
+                value={inputTag}
+                onChange={(e) => setInputTag(e.target.value)}
+                onKeyDown={handleTagInput}
+                className="flex-grow outline-none min-w-[120px]"
+                placeholder="태그 입력 후 Enter"
+            />
+        </div>
+        </div>
+
                 {/* 태그 입력 */}
                 <div>
                     <label className="block mb-2">태그 (쉼표로 구분)</label>
                     <input 
                         type="text"
                         value={tags.join(',')}
+                        className="w-full p-2 border rounded"
                         onChange={(e) => 
                             setTags(
                                 [...new Set(e.target.value.split(',').map(tag => tag.trim()))])
                         }
+                        placeholder="예: javascript, react, web"
                     />
                 </div>
                 
@@ -137,7 +185,7 @@ export default function WritePage(){
                     <MDEditor
                         value={content}
                         onChange={(val?: string) => setContent(val || '')}
-                        height={400}
+                        height={800}
                     />  
                 </div>
 

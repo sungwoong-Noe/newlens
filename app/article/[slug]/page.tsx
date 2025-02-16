@@ -1,4 +1,4 @@
-import { getArticleBySlug } from "@/lib/firebase-article";
+import { getArticleBySlug } from "@/lib/firebase-articles";
 import { remark } from "remark";
 import html from "remark-html";
 
@@ -14,7 +14,6 @@ export default async function ArticlePage({params}: Props) {
         .process(article.content);
     
     const contentHtml = processedContent.toString();
-
 
     return (
         <article className="container mx-auto px-4 py-8">
