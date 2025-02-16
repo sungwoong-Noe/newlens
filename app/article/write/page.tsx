@@ -22,6 +22,7 @@ export default function WritePage(){
     const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if(file) {
+            
             setThumbnail(file);
             const reader = new FileReader();
             reader.onloadend = () => {

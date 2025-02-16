@@ -22,7 +22,7 @@ export default async function ArticlePage() {
                 {posts.map((post) => (
                     <Link href={`/blog/${post.slug}`} key={`${post.slug}_${post.date}`}>
                         <div className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-                            {post.thumbnail && (
+                            {/* {post.thumbnail && (
                                 <Image 
                                     src={post.thumbnail}
                                     alt={post.title}
@@ -30,10 +30,9 @@ export default async function ArticlePage() {
                                     height={200}
                                     className="w-full h-48 object-cover"
                                 />
-                            )}
+                            )} */}
                             <div className="p-4">
                                 <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
-                                <p className="text-gray-600 mb-2 line-clamp-2">{post.description}</p>
                                 <div className="flex flex-wrap gap-2 mb-2">
                                     {post.tags?.map((tag, index) => (
                                         <span key={`${post.slug}_${tag}_${index}`} className="px-2 py-1 bg-gray-100 text-sm rounded">
@@ -41,6 +40,7 @@ export default async function ArticlePage() {
                                         </span>
                                     ))}
                                 </div>
+                                <p className="text-gray-600 mb-2 line-clamp-2">{post.description}</p>
                                 <div className="text-sm text-gray-500">
                                     {new Date(post.date).toLocaleDateString()}
                                 </div>
