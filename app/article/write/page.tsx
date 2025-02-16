@@ -3,14 +3,22 @@
 import Image from "next/image"; 
 import dynamic from "next/dynamic";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createArticle } from "@/lib/firebase-articles";
+import { registTag, getAllTags } from "@/lib/firebase-tags";
+import { TagMetadata } from "@/types/tag";
 
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), {
     ssr: false,
 });
 
 export default function WritePage(){
+    const [allTags, setAllTags] = useState<TagMetadata[]>([]);
+
+    useEffect(() => {
+        getAllTags().then(tags => setAllTags(tags));
+    }, []);
+
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [thumbnail, setThumbnail] = useState<File | null>(null);
@@ -34,13 +42,19 @@ export default function WritePage(){
     };
 
 
-    const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleTagInput = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if(e.key === 'Enter' || e.key === ','){
             e.preventDefault();
             const newTag = inputTag.trim();
             if(newTag && !tags.includes(newTag)) { 
                 setTags([...tags, newTag]);
                 setInputTag('');
+
+                const registedTag = allTags.find(tag => tag.name === newTag);
+
+                if(!registedTag) { 
+                    await registTag({name: newTag});
+                }
             }
         }
     }
