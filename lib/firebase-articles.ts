@@ -1,6 +1,7 @@
 import { collection, query, orderBy, getDocs, where, addDoc } from "firebase/firestore";
 import {db} from "./firebase";
 import { Article, ArticleMetadata } from "@/types/article";
+import { Tag } from "@/types/tag";
 
 // 모든 게시글 조회
 export async function getAllArticles(): Promise<ArticleMetadata[]> {
@@ -57,7 +58,7 @@ export async function createArticle(articleData: {
     title: string;
     content: string;
     thumbnail?: string;
-    tags: string[];
+    tags: Tag[];
     category: string;
     description?: string;
 }): Promise<string> {

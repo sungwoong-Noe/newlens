@@ -1,13 +1,10 @@
 'use client';
 
-import Image from "next/image"; 
 import dynamic from "next/dynamic";
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createArticle } from "@/lib/firebase-articles";
-import { registTag, getAllTags } from "@/lib/firebase-tags";
-import { Tag, TagMetadata } from "@/types/tag";
-import "../../globals.css";
+import { registTag} from "@/lib/firebase-tags";
+import { Tag } from "@/types/tag";
 
 
 
@@ -16,36 +13,35 @@ const MDEditor = dynamic(() => import('@uiw/react-md-editor'), {
 });
 
 export default function WritePage(){
-    const [allTags, setAllTags] = useState<TagMetadata[]>([]);
-
-    useEffect(() => {
-        getAllTags().then(tags => setAllTags(tags));
-    }, []);
-
+    
+    
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [thumbnail, setThumbnail] = useState<File | null>(null);
-    const [thumbnailPreview, setThumbnailPreview] = useState('');
     // 태그 목록 
     const [tags, setTags] = useState<Tag[]>([]); 
     const [category, setCategory] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
+    const [isSubmitting, setIsSubmitting] = useState(false); 
     // 태그 input 창
     const [inputTag, setInputTag] = useState('');
-
-    const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if(file) {
+    
+    // useEffect(() => {
+    //     getAllTags().then(tags => setAllTags(tags));
+    // }, []);
+    // const [allTags, setAllTags] = useState<TagMetadata[]>([]);
+    // const [thumbnail, setThumbnail] = useState<File | null>(null);
+    // const [thumbnailPreview, setThumbnailPreview] = useState('');
+    // const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const file = e.target.files?.[0];
+    //     if(file) {
             
-            setThumbnail(file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setThumbnailPreview(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+    //         setThumbnail(file);
+    //         const reader = new FileReader();
+    //         reader.onloadend = () => {
+    //             setThumbnailPreview(reader.result as string);
+    //         };
+    //         reader.readAsDataURL(file);
+    //     }
+    // };
 
 
     const handleTagInput = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -78,18 +74,20 @@ export default function WritePage(){
         try {
             setIsSubmitting(true);
 
-            let thumbnailUrl = '';
-            if(thumbnail) {
-                const storage = getStorage();
-                const storageRef = ref(storage, `thumbnails/${Date.now()}_${thumbnail.name}`);
-                await uploadBytes(storageRef, thumbnail);
-                thumbnailUrl = await getDownloadURL(storageRef);
-            }
+
+            /* 썸네일 업로드 기능 추가 예정 */
+            // let thumbnailUrl = '';
+            // if(thumbnail) {
+            //     const storage = getStorage();
+            //     const storageRef = ref(storage, `thumbnails/${Date.now()}_${thumbnail.name}`);
+            //     await uploadBytes(storageRef, thumbnail);
+            //     thumbnailUrl = await getDownloadURL(storageRef);
+            // }
 
             const slug = await createArticle({
                 title, 
                 content, 
-                thumbnail: thumbnailUrl,
+                // thumbnail: thumbnailUrl,
                 tags, 
                 category, 
                 description: content.substring(0, 150) + '...'
@@ -185,40 +183,24 @@ export default function WritePage(){
             />
         </div>
         </div>
+            {/* 마크다운 에디터 */}
+            <div data-color-mode="light">
+                <label className="block mb-2">내용</label>
+                <MDEditor
+                    value={content}
+                    onChange={(val?: string) => setContent(val || '')}
+                    height={800}
+                />  
+            </div>
 
-                {/* 태그 입력 */}
-                <div>
-                    <label className="block mb-2">태그 (쉼표로 구분)</label>
-                    <input 
-                        type="text"
-                        value={tags.join(',')}
-                        className="w-full p-2 border rounded"
-                        onChange={(e) => 
-                            setTags(
-                                [...new Set(e.target.value.split(',').map(tag => tag.trim()))])
-                        }
-                        placeholder="예: javascript, react, web"
-                    />
-                </div>
-                
-                {/* 마크다운 에디터 */}
-                <div data-color-mode="light">
-                    <label className="block mb-2">내용</label>
-                    <MDEditor
-                        value={content}
-                        onChange={(val?: string) => setContent(val || '')}
-                        height={800}
-                    />  
-                </div>
-
-                {/* 제출 버튼 */}
-                <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
-                >
-                    {isSubmitting ? '저장 중...' : '글 발행하기'}
-                </button>
+            {/* 제출 버튼 */}
+            <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
+            >
+                {isSubmitting ? '저장 중...' : '글 발행하기'}
+            </button>
             </form>
         </div>
     )
