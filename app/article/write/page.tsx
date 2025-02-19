@@ -6,7 +6,10 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useState, useEffect } from "react";
 import { createArticle } from "@/lib/firebase-articles";
 import { registTag, getAllTags } from "@/lib/firebase-tags";
-import { TagMetadata } from "@/types/tag";
+import { Tag, TagMetadata } from "@/types/tag";
+import "../../globals.css";
+
+
 
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), {
     ssr: false,
@@ -23,9 +26,12 @@ export default function WritePage(){
     const [content, setContent] = useState('');
     const [thumbnail, setThumbnail] = useState<File | null>(null);
     const [thumbnailPreview, setThumbnailPreview] = useState('');
-    const [tags, setTags] = useState<string[]>([]);
+    // 태그 목록 
+    const [tags, setTags] = useState<Tag[]>([]); 
     const [category, setCategory] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // 태그 input 창
     const [inputTag, setInputTag] = useState('');
 
     const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,22 +51,23 @@ export default function WritePage(){
     const handleTagInput = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if(e.key === 'Enter' || e.key === ','){
             e.preventDefault();
+
             const newTag = inputTag.trim();
-            if(newTag && !tags.includes(newTag)) { 
-                setTags([...tags, newTag]);
-                setInputTag('');
+            const reqTag = await registTag({name: inputTag});
 
-                const registedTag = allTags.find(tag => tag.name === newTag);
-
-                if(!registedTag) { 
-                    await registTag({name: newTag});
-                }
+            if(newTag && !tags.find(tag => tag.name.toLowerCase() === newTag.toLowerCase())){ 
+                setTags([...tags, reqTag])
             }
+
+            setInputTag('');
         }
     }
 
-    const removeTag = (tag: string) => {
-        setTags(tags.filter(t => t !== tag));
+
+
+
+    const removeTag = (name: string) => {
+        setTags(tags.filter(t => t.name !== name));
     }
 
 
@@ -156,11 +163,12 @@ export default function WritePage(){
             {tags.map((tag, index) => (
                 <span 
                     key={index} 
-                    className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center"
+                    // className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center"
+                    className={`${tag.color} px-2 py-1 rounded-full text-sm flex items-center`}
                 >
-                    {tag}
+                    {tag.name}
                     <button 
-                        onClick={() => removeTag(tag)}
+                        onClick={() => removeTag(tag.name)}
                         className="ml-1 text-blue-600 hover:text-blue-800"
                     >
                         ×

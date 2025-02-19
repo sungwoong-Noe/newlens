@@ -1,4 +1,5 @@
 import Sidebar from "@/components/Sidebar";
+import "../globals.css";
 
 export default function ArticleLayout(
     {children}: {children: React.ReactNode;}
