@@ -1,4 +1,4 @@
-import { collection, query, orderBy, getDocs, where, addDoc } from "firebase/firestore";
+import { collection, query, orderBy, getDocs, addDoc } from "firebase/firestore";
 import { Tag, TagMetadata } from "@/types/tag";
 import { db } from "./firebase";
 
