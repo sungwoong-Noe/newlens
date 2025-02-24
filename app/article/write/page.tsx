@@ -5,8 +5,7 @@ import { useState } from "react";
 import { createArticle } from "@/lib/firebase-articles";
 import { registTag} from "@/lib/firebase-tags";
 import { Tag } from "@/types/tag";
-
-
+import { useRouter } from 'next/navigation';
 
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), {
     ssr: false,
@@ -23,6 +22,7 @@ export default function WritePage(){
     const [isSubmitting, setIsSubmitting] = useState(false); 
     // 태그 input 창
     const [inputTag, setInputTag] = useState('');
+    const router = useRouter();
     
     // useEffect(() => {
     //     getAllTags().then(tags => setAllTags(tags));
@@ -93,8 +93,11 @@ export default function WritePage(){
                 description: content.substring(0, 150) + '...'
             });
 
-            // 성공 후 리디렉션
-            window.location.href = `/article/${slug}`
+            // 전체 페이지 리프레시
+            router.refresh();
+            
+            // 리디렉션
+            router.push(`/article/${slug}`);
         } catch(error) {
             console.error('Error creating post: ', error);
             alert('포스팅 작성 중 오류가 발생했습니다.');

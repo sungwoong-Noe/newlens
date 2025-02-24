@@ -4,21 +4,30 @@ import { Article, ArticleMetadata } from "@/types/article";
 import { Tag } from "@/types/tag";
 
 // 모든 게시글 조회
-export async function getAllArticles(): Promise<ArticleMetadata[]> {
+export async function getAllArticles(tagName?: string): Promise<ArticleMetadata[]> {
     try { 
         const articleCol = collection(db, 'articles');
         const q = query(articleCol, orderBy('createdAt', 'desc'));
-        const snapshot = await getDocs(q);
-
-        return snapshot.docs.map(doc => ({
-            slug: doc.data().slug, 
-            title: doc.data().title, 
-            date: doc.data().createdAt.toDate().toISOString(),
-            description: doc.data().description || '',
-            thumbnail: doc.data().thumbnail || '',
-            tags: doc.data().tags || [],
-            category: doc.data().category
-        }));
+        const querySnapshot = await getDocs(q);
+        
+        const articleData: ArticleMetadata[] = [];
+        querySnapshot.forEach((doc) => {
+            const article = doc.data();
+            const hasTag = tagName ? (article.tags ?? []).some((tag: Tag) => tag.name === tagName) : true;
+            if(tagName && !hasTag) return;
+            
+            articleData.push({
+                slug: doc.data().slug, 
+                title: doc.data().title, 
+                date: doc.data().createdAt.toDate().toISOString(),
+                description: doc.data().description || '',
+                thumbnail: doc.data().thumbnail || '',
+                tags: doc.data().tags || [],
+                category: doc.data().category
+            });
+        });
+        
+        return articleData;
     } catch (error) { 
         console.error('Error fetching articles: ', error);
         return [];

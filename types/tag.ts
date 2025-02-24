@@ -8,3 +8,7 @@ export interface TagMetadata {
 export interface Tag extends TagMetadata {
     slug: string;
 }
+
+export interface SidebarTag extends Tag {
+    count: number;
+}

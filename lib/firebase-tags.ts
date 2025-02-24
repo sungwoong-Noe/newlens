@@ -1,6 +1,7 @@
 import { collection, query, orderBy, getDocs, addDoc } from "firebase/firestore";
-import { Tag, TagMetadata } from "@/types/tag";
+import { SidebarTag, Tag, TagMetadata } from "@/types/tag";
 import { db } from "./firebase";
+import { getAllArticles } from "./firebase-articles";
 
 const getRandomTailwindColor = () => {
     const colors = [
@@ -38,6 +39,38 @@ export async function getAllTags(): Promise<TagMetadata[]> {
 }
 
 
+export async function getAllSidebarTags(): Promise<SidebarTag[]> {
+    try {
+        const tagsCol = collection(db, `tags`);
+        const q = query(tagsCol, orderBy('name', 'asc'));
+        const snapshot = await getDocs(q);
+
+        const articles = await getAllArticles();
+        
+        const tags = snapshot.docs.map(doc => {
+            const tagData = doc.data();
+            // 각 태그에 대해 매칭되는 게시글 수 계산
+            const count = articles.filter(article => 
+                article.tags?.some(t => t.name === tagData.name)
+            ).length;
+
+            return {
+                name: tagData.name,
+                color: tagData.color,
+                slug: tagData.slug,
+                createdAt: tagData.createdAt.toDate(),
+                updatedAt: tagData.updatedAt.toDate(),
+                count: count
+            };
+        });
+
+        return tags;
+    } catch (error) {
+        console.error('Error fetching sidebar tags:', error);
+        return [];
+    }
+}
+
 
 export async function registTag(tagData: {
     name: string;
@@ -71,7 +104,7 @@ export async function registTag(tagData: {
             color: tagForm.color, 
             slug: tagForm.slug,
             createdAt: tagForm.createdAt,
-            updatedAt: tagForm.updatedAt
+            updatedAt: tagForm.updatedAt,
         }
 
         return res;

@@ -1,8 +1,16 @@
 import Link from "next/link";
 import { getAllArticles } from "@/lib/firebase-articles";
 
-export default async function ArticlePage() {
-    const posts = await getAllArticles()
+export default async function ArticlePage({
+    searchParams,
+  }: {
+    searchParams: { [key: string]: string | string[] | undefined };
+  }) {
+
+    console.log('searchParams', searchParams.category)
+    const tagName = searchParams.category as string;
+    
+    const posts = await getAllArticles(tagName);
     console.log('articles', posts)
 
     return (
