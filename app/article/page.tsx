@@ -1,15 +1,14 @@
 import Link from "next/link";
 import { getAllArticles } from "@/lib/firebase-articles";
 
-export default async function ArticlePage({
-    searchParams,
-  }: {
-    searchParams: { [key: string]: string | string[] | undefined };
-  }) {
+type PageParams = Promise<{tagName: string}>
 
-    console.log('searchParams', searchParams.category)
-    const tagName = searchParams.category as string;
-    
+
+export default async function ArticlePage({searchParams}: {searchParams: PageParams}) {
+    try {
+        console.log('searchParams', (await searchParams).tagName)
+        const tagName = (await searchParams).tagName;
+        
     const posts = await getAllArticles(tagName);
     console.log('articles', posts)
 
@@ -54,4 +53,8 @@ export default async function ArticlePage({
             </div>
         </div>
     );
+    }  catch (error) {
+        console.error('Error loading articles:', error);
+        return <div>Error loading articles</div>;
+    }
 }
