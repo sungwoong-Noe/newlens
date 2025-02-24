@@ -30,8 +30,8 @@ export default async function ArticlePage() {
                                 <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
                                 <div className="flex flex-wrap gap-2 mb-2">
                                     {post.tags?.map((tag, index) => (
-                                        <span key={`${post.slug}_${tag}_${index}`} className="px-2 py-1 bg-gray-100 text-sm rounded">
-                                            {tag}
+                                        <span key={`${post.slug}_${tag.name}_${index}`} className="px-2 py-1 bg-gray-100 text-sm rounded">
+                                            {tag.name}
                                         </span>
                                     ))}
                                 </div>
