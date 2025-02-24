@@ -21,10 +21,16 @@ export default function Header() {
           {/* 네비게이션 메뉴 */}
           <nav className="flex gap-6">
             <Link 
-              href="/blog"
+              href="/article"
               className="text-gray-600 hover:text-gray-900 transition-colors"
             >
               블로그
+            </Link>
+            <Link 
+              href="/blog"
+              className="text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              블로그_test
             </Link>
             <Link 
               href="/news"
